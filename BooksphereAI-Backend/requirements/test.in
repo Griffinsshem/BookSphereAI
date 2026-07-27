@@ -1,0 +1,6 @@
+-c base.txt
+pytest
+pytest-cov
+pytest-flask
+factory-boy
+freezegun

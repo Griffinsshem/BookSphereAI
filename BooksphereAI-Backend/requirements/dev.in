@@ -1,0 +1,6 @@
+-c base.txt
+black
+ruff
+mypy
+ipython
+pre-commit
