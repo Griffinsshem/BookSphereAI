@@ -11,5 +11,5 @@ strict = true
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["src"]
+pythonpath = [".", "src"]
 addopts = "--cov=booksphere --cov-report=term-missing --cov-fail-under=90"

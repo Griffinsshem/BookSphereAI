@@ -10,3 +10,4 @@ argon2-cffi
 marshmallow
 python-dotenv
 gunicorn
+flask-cors
