@@ -35,6 +35,14 @@ _CSRF_PROTECTED_ENDPOINTS = {"auth.refresh", "auth.logout"}
 def register_csrf_protection(app: Flask) -> None:
     @app.before_request
     def _check_csrf() -> None:
+        # CORS preflight requests (OPTIONS) never carry cookies or
+        # custom headers by design -- that's not what preflight is
+        # for, it's the browser asking permission before the REAL
+        # request. Applying CSRF checks here would reject every
+        # preflight unconditionally and block the actual request from
+        # ever being sent, regardless of how correct its CSRF token is.
+        if request.method == "OPTIONS":
+            return
         if request.endpoint not in _CSRF_PROTECTED_ENDPOINTS:
             return
 

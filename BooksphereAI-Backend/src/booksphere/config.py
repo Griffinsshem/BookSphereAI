@@ -9,6 +9,16 @@ from __future__ import annotations
 import os
 from datetime import timedelta
 
+from dotenv import load_dotenv
+
+# Loaded once, at import time, before any environment variable below is
+# read. This means running `pytest`, `flask run`, etc. from this
+# directory automatically picks up .env -- no need to `export` every
+# variable manually in every new shell session, which was the source
+# of several confusing "why is it connecting to the wrong port"
+# failures during development.
+load_dotenv()
+
 
 class BaseConfig:
     """Shared defaults. Do not instantiate directly."""

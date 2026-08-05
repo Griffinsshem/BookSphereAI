@@ -35,6 +35,17 @@ def _extract_csrf_token(response) -> str:
 
 
 class TestRefreshEndpoint:
+    def test_options_preflight_is_never_csrf_blocked(self, client, db_session):
+        """Regression test: CORS preflight (OPTIONS) requests must
+        never be rejected by CSRF checks, since preflight requests
+        never carry cookies or custom headers by browser design. A
+        403 here would make the browser block the real request
+        entirely -- discovered via manual browser testing, since the
+        Flask test client's normal request cycle doesn't simulate
+        real preflight behavior."""
+        response = client.options("/api/v1/auth/refresh")
+        assert response.status_code != 403
+
     def test_refresh_succeeds_with_valid_cookie_and_csrf(self, client, db_session):
         register_response = _register(client)
         csrf_token = _extract_csrf_token(register_response)
