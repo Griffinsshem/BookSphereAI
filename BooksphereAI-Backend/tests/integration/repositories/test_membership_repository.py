@@ -5,6 +5,7 @@ designed — a unit test against a fake repository couldn't catch a
 missing/wrong DB constraint.
 """
 from __future__ import annotations
+import uuid
 
 import pytest
 from sqlalchemy.exc import IntegrityError
@@ -18,11 +19,11 @@ from booksphere.security.password_hasher import hash_password
 
 def _make_user_and_org(db_session):
     user = User(
-        email=f"test-{id(object())}@example.com",
+        email=f"test-{uuid.uuid4().hex[:12]}@example.com",
         password_hash=hash_password("correct-horse-battery-staple-1"),
         full_name="Test User",
     )
-    org = Organization(name="Test Org", slug=f"test-org-{id(object())}")
+    org = Organization(name="Test Org", slug=f"test-org-{uuid.uuid4().hex[:12]}")
     db_session.add(user)
     db_session.add(org)
     db_session.flush()
