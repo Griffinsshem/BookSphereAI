@@ -3,6 +3,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { useAuthStore } from "@/lib/auth-store";
+import { useOrgStore } from "@/lib/org-store";
 import {
   getMeRequest,
   loginRequest,
@@ -61,13 +62,32 @@ export function useLogout() {
 
 export function useCurrentUser() {
   const accessToken = useAuthStore((s) => s.accessToken);
+  const setCurrentOrg = useOrgStore((s) => s.setCurrentOrg);
 
-  return useQuery({
+  const query = useQuery({
     queryKey: ["auth", "me"],
     queryFn: getMeRequest,
     enabled: !!accessToken,
     retry: false,
   });
+
+  // Derives currentOrg from whatever /users/me returns -- no separate
+  // fetch. Takes the FIRST membership since every user currently has
+  // exactly one; this is the exact spot that grows into "let the user
+  // pick" once multi-org membership is reachable via the product.
+  useEffect(() => {
+    const membership = query.data?.memberships[0];
+    if (membership) {
+      setCurrentOrg({
+        id: membership.organization.id,
+        name: membership.organization.name,
+        slug: membership.organization.slug,
+        role: membership.role,
+      });
+    }
+  }, [query.data, setCurrentOrg]);
+
+  return query;
 }
 
 /**
