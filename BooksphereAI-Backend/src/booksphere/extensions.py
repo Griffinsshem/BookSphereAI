@@ -28,6 +28,18 @@ cors = CORS()
 def init_extensions(app: Flask) -> None:
     """Bind all Flask extensions to the given app instance."""
     db.init_app(app)
+
+    # Import every model module HERE, immediately after db.init_app,
+    # so SQLAlchemy's metadata is always complete -- for the running
+    # app AND for `flask db migrate` (which also goes through
+    # create_app()). Without this explicit import, a model only
+    # becomes visible to Alembic once something else transitively
+    # imports it (e.g. its own repository/service/route) -- which is
+    # exactly the trap Booking fell into: it had no such chain yet,
+    # so `flask db migrate` silently reported "No changes detected"
+    # instead of erroring.
+    import booksphere.models  # noqa: F401
+
     migrate.init_app(app, db)
     jwt.init_app(app)
     limiter.init_app(app)
