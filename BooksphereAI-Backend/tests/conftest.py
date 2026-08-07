@@ -17,6 +17,16 @@ from booksphere.extensions import db as _db
 def app():
     application = create_app("testing")
     with application.app_context():
+        # btree_gist is required by the Booking model's exclusion
+        # constraint (ex_bookings_no_overlap). create_all() builds
+        # tables directly from SQLAlchemy metadata -- it does NOT run
+        # our Alembic migrations, so the manual "CREATE EXTENSION"
+        # line we added to that migration never executes for the test
+        # database. Ensuring it here, before create_all(), is what
+        # makes the test DB match what the real migration produces.
+        _db.session.execute(_db.text("CREATE EXTENSION IF NOT EXISTS btree_gist"))
+        _db.session.commit()
+
         _db.create_all()
         yield application
         _db.drop_all()

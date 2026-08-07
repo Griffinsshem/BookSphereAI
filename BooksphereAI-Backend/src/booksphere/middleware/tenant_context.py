@@ -34,3 +34,19 @@ def require_organization_role(organization_id: UUID, *allowed_roles: str) -> Non
 
     if membership is None or membership.role not in allowed_roles:
         raise Forbidden(description="You do not have access to this organization.")
+
+
+def get_membership_role(organization_id: UUID) -> str | None:
+    """Returns the current JWT-authenticated user's role within the
+    given organization, or None if they're not a member.
+
+    Distinct from require_organization_role: that function only
+    ANSWERS yes/no against a fixed allow-list. Some endpoints (like
+    booking creation) need the actual role value to branch behavior
+    -- e.g. "customers can only book for themselves; staff and above
+    can book on behalf of anyone" -- which requires knowing WHICH role
+    the requester has, not just whether it's in some allowed set.
+    """
+    user_id = get_jwt_identity()
+    membership = MembershipRepository().get_for_user_and_org(user_id, organization_id)
+    return membership.role if membership else None
