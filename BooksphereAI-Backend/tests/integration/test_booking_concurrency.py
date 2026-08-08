@@ -34,6 +34,7 @@ from booksphere.models.service_resource import ServiceResource
 from booksphere.models.user import User
 from booksphere.models.working_hours import WorkingHours
 from booksphere.repositories.booking_repository import BookingRepository
+from booksphere.repositories.organization_repository import OrganizationRepository
 from booksphere.repositories.resource_repository import ResourceRepository
 from booksphere.repositories.service_repository import ServiceRepository
 from booksphere.repositories.service_resource_repository import ServiceResourceRepository
@@ -124,6 +125,7 @@ def _attempt_booking(app, organization_id, resource_id, service_id, customer_id,
             ServiceRepository(),
             ServiceResourceRepository(),
             WorkingHoursRepository(),
+            OrganizationRepository(),
         )
         try:
             service.create_booking(

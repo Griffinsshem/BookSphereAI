@@ -33,6 +33,7 @@ from booksphere.domain.bookings.exceptions import (
 from booksphere.domain.resources.exceptions import ResourceNotFoundError, ServiceNotFoundError
 from booksphere.middleware.tenant_context import get_membership_role, require_organization_role
 from booksphere.repositories.booking_repository import BookingRepository
+from booksphere.repositories.organization_repository import OrganizationRepository
 from booksphere.repositories.resource_repository import ResourceRepository
 from booksphere.repositories.service_repository import ServiceRepository
 from booksphere.repositories.service_resource_repository import ServiceResourceRepository
@@ -53,6 +54,7 @@ def _build_service() -> BookingService:
         ServiceRepository(),
         ServiceResourceRepository(),
         WorkingHoursRepository(),
+        OrganizationRepository(),
     )
 
 

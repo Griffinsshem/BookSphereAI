@@ -47,6 +47,7 @@ class OrganizationResponseSchema(Schema):
     id = fields.UUID()
     name = fields.String()
     slug = fields.String()
+    timezone = fields.String()
 
 
 class MembershipResponseSchema(Schema):

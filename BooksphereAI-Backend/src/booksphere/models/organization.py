@@ -24,6 +24,15 @@ class Organization(db.Model, UUIDPrimaryKeyMixin, TimestampMixin):
         String(100), unique=True, index=True, nullable=False
     )
 
+    # IANA timezone name (e.g. "Africa/Nairobi", "America/New_York").
+    # Working hours are stored as plain wall-clock times (no tz) --
+    # this field is what lets us correctly interpret "9am" as 9am IN
+    # THIS ORGANIZATION'S LOCAL TIME, then convert to/from UTC for
+    # actual booking storage and comparison. Defaults to UTC so
+    # existing data / a business that never sets it still behaves
+    # correctly, just without local-time convenience.
+    timezone: Mapped[str] = mapped_column(String(50), nullable=False, default="UTC", server_default="UTC")
+
     memberships: Mapped[list["OrganizationMembership"]] = relationship(
         back_populates="organization", cascade="all, delete-orphan"
     )

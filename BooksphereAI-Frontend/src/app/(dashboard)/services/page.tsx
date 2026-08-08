@@ -1,11 +1,13 @@
 "use client";
 
 import { useOrgStore } from "@/lib/org-store";
+import { useResources } from "@/features/resources/hooks/useResources";
 import { ServiceForm } from "@/features/services/components/ServiceForm";
 import { ServiceList } from "@/features/services/components/ServiceList";
 
 export default function ServicesPage() {
   const currentOrg = useOrgStore((s) => s.currentOrg);
+  const { data: resourcesData } = useResources(currentOrg?.id);
 
   if (!currentOrg) {
     return (
@@ -16,6 +18,7 @@ export default function ServicesPage() {
   }
 
   const canManage = currentOrg.role === "owner" || currentOrg.role === "manager";
+  const resources = resourcesData?.items ?? [];
 
   return (
     <main className="mx-auto max-w-2xl px-4 py-8">
@@ -31,7 +34,7 @@ export default function ServicesPage() {
         </div>
       )}
 
-      <ServiceList organizationId={currentOrg.id} />
+      <ServiceList organizationId={currentOrg.id} resources={resources} />
     </main>
   );
 }

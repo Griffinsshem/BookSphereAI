@@ -42,6 +42,7 @@ from booksphere.domain.resources.exceptions import ResourceNotFoundError, Servic
 from booksphere.extensions import db
 from booksphere.models.booking import Booking
 from booksphere.repositories.booking_repository import BookingRepository
+from booksphere.repositories.organization_repository import OrganizationRepository
 from booksphere.repositories.resource_repository import ResourceRepository
 from booksphere.repositories.service_repository import ServiceRepository
 from booksphere.repositories.service_resource_repository import ServiceResourceRepository
@@ -56,12 +57,18 @@ class BookingService:
         service_repo: ServiceRepository,
         service_resource_repo: ServiceResourceRepository,
         working_hours_repo: WorkingHoursRepository,
+        organization_repo: OrganizationRepository,
     ) -> None:
         self._bookings = booking_repo
         self._resources = resource_repo
         self._services = service_repo
         self._service_resources = service_resource_repo
         self._working_hours = working_hours_repo
+        self._organizations = organization_repo
+
+    def _get_org_timezone(self, organization_id: UUID) -> str:
+        org = self._organizations.get_by_id(organization_id)
+        return org.timezone if org else "UTC"
 
     def get_availability(
         self,
@@ -82,12 +89,14 @@ class BookingService:
         existing_bookings = self._bookings.get_confirmed_bookings_for_date(
             resource_id, target_date
         )
+        org_timezone = self._get_org_timezone(organization_id)
 
         return compute_available_slots(
             target_date=target_date,
             duration_minutes=service.duration_minutes,
             working_hours=windows,
             existing_bookings=existing_bookings,
+            org_timezone=org_timezone,
         )
 
     def create_booking(
@@ -121,7 +130,8 @@ class BookingService:
             raise ResourceNotFoundError()
 
         windows = self._working_hours.list_for_resource(resource_id)
-        validate_within_working_hours(start_time, end_time, windows)
+        org_timezone = self._get_org_timezone(organization_id)
+        validate_within_working_hours(start_time, end_time, windows, org_timezone)
 
         existing_bookings = self._bookings.get_confirmed_bookings_for_date(
             resource_id, start_time.date()
