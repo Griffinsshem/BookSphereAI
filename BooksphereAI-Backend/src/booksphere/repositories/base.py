@@ -27,3 +27,6 @@ class BaseRepository(Generic[ModelT]):
 
     def commit(self) -> None:
         db.session.commit()
+
+    def delete(self, entity: ModelT) -> None:
+        db.session.delete(entity)

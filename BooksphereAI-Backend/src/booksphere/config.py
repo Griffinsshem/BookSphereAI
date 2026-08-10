@@ -35,6 +35,17 @@ class BaseConfig:
     JWT_ACCESS_TOKEN_EXPIRES = timedelta(minutes=15)
     JWT_TOKEN_LOCATION = ["headers"]
 
+    # --- Celery ---
+    # Reuses the same Redis instance as rate limiting, on a different
+    # logical DB number, so message-broker traffic doesn't collide
+    # with rate-limit key storage.
+    CELERY_BROKER_URL: str = os.environ.get(
+        "CELERY_BROKER_URL", "redis://localhost:6380/1"
+    )
+    CELERY_RESULT_BACKEND: str = os.environ.get(
+        "CELERY_RESULT_BACKEND", "redis://localhost:6380/1"
+    )
+
     # --- Rate limiting (flask-limiter) ---
     # Redis-backed so limits are enforced correctly across multiple
     # app instances. Falls back to in-memory only if unset — acceptable

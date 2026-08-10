@@ -15,6 +15,7 @@ from __future__ import annotations
 from booksphere.models.base import TimestampMixin, UUIDPrimaryKeyMixin
 from booksphere.models.booking import Booking
 from booksphere.models.organization import Organization
+from booksphere.models.organization_invite import OrganizationInvite
 from booksphere.models.organization_membership import OrganizationMembership
 from booksphere.models.refresh_token import RefreshToken
 from booksphere.models.resource import Resource
@@ -28,6 +29,7 @@ __all__ = [
     "UUIDPrimaryKeyMixin",
     "Booking",
     "Organization",
+    "OrganizationInvite",
     "OrganizationMembership",
     "RefreshToken",
     "Resource",

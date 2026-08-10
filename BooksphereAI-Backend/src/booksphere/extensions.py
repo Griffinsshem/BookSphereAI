@@ -41,6 +41,9 @@ def init_extensions(app: Flask) -> None:
     import booksphere.models  # noqa: F401
 
     migrate.init_app(app, db)
+
+    from booksphere.tasks.celery_app import init_celery
+    init_celery(app)
     jwt.init_app(app)
     limiter.init_app(app)
     cors.init_app(
