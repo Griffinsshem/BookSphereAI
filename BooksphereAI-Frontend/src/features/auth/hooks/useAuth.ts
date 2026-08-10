@@ -62,7 +62,7 @@ export function useLogout() {
 
 export function useCurrentUser() {
   const accessToken = useAuthStore((s) => s.accessToken);
-  const setCurrentOrg = useOrgStore((s) => s.setCurrentOrg);
+  const setAvailableOrgs = useOrgStore((s) => s.setAvailableOrgs);
 
   const query = useQuery({
     queryKey: ["auth", "me"],
@@ -71,21 +71,24 @@ export function useCurrentUser() {
     retry: false,
   });
 
-  // Derives currentOrg from whatever /users/me returns -- no separate
-  // fetch. Takes the FIRST membership since every user currently has
-  // exactly one; this is the exact spot that grows into "let the user
-  // pick" once multi-org membership is reachable via the product.
+  // Derives the full list of orgs from whatever /users/me returns --
+  // no separate fetch. Now that Team Management makes multi-org
+  // membership reachable (accepting an invite to a second org), this
+  // populates ALL memberships, not just the first -- setAvailableOrgs
+  // decides which one stays selected (preserving the current pick if
+  // still valid, defaulting to the first otherwise).
   useEffect(() => {
-    const membership = query.data?.memberships[0];
-    if (membership) {
-      setCurrentOrg({
-        id: membership.organization.id,
-        name: membership.organization.name,
-        slug: membership.organization.slug,
-        role: membership.role,
-      });
+    if (query.data?.memberships) {
+      setAvailableOrgs(
+        query.data.memberships.map((m) => ({
+          id: m.organization.id,
+          name: m.organization.name,
+          slug: m.organization.slug,
+          role: m.role,
+        })),
+      );
     }
-  }, [query.data, setCurrentOrg]);
+  }, [query.data, setAvailableOrgs]);
 
   return query;
 }

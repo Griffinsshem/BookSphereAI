@@ -1,18 +1,13 @@
 /**
- * Minimal current-organization state.
+ * Current-organization state, now a REAL switcher.
  *
- * DELIBERATELY not a full multi-org switcher. Every user today has
- * exactly one organization membership (created at registration) --
- * there is no UI path yet to join a second org, only our own test
- * helpers touch the DB directly to simulate that. Building a full
- * picker/switcher now would be scope creep into Team Management,
- * which is where "join multiple orgs" actually becomes reachable
- * through the product.
- *
- * The SHAPE of this hook (a single "current org" read by every
- * feature that needs org-scoped API calls) is what should survive
- * once Team Management lands -- only the internals grow from "there's
- * only one, use it" to "let the user pick which one is active."
+ * Grown from Resource Management's deliberately minimal placeholder
+ * ("there's only one org, use it") now that Team Management makes
+ * multi-org membership actually reachable through the product (via
+ * accepting an invite to a second org). The SHAPE from before is
+ * preserved -- every feature that reads useOrgStore().currentOrg
+ * still works unchanged -- this only ADDS the list + switch
+ * capability on top.
  */
 import { create } from "zustand";
 
@@ -25,12 +20,37 @@ interface OrgSummary {
 
 interface OrgState {
   currentOrg: OrgSummary | null;
-  setCurrentOrg: (org: OrgSummary) => void;
+  availableOrgs: OrgSummary[];
+  setAvailableOrgs: (orgs: OrgSummary[]) => void;
+  switchOrg: (orgId: string) => void;
   clearCurrentOrg: () => void;
 }
 
-export const useOrgStore = create<OrgState>((set) => ({
+export const useOrgStore = create<OrgState>((set, get) => ({
   currentOrg: null,
-  setCurrentOrg: (org) => set({ currentOrg: org }),
-  clearCurrentOrg: () => set({ currentOrg: null }),
+  availableOrgs: [],
+
+  setAvailableOrgs: (orgs) => {
+    const { currentOrg } = get();
+    // Preserves the current selection across a refetch (e.g. after
+    // /users/me re-runs) if it's still in the new list; otherwise
+    // defaults to the first org -- matches the original "there's
+    // only one, use it" behavior for users who still only belong to
+    // one organization.
+    const stillValid = currentOrg && orgs.some((o) => o.id === currentOrg.id);
+    set({
+      availableOrgs: orgs,
+      currentOrg: stillValid ? currentOrg : (orgs[0] ?? null),
+    });
+  },
+
+  switchOrg: (orgId) => {
+    const { availableOrgs } = get();
+    const target = availableOrgs.find((o) => o.id === orgId);
+    if (target) {
+      set({ currentOrg: target });
+    }
+  },
+
+  clearCurrentOrg: () => set({ currentOrg: null, availableOrgs: [] }),
 }));
