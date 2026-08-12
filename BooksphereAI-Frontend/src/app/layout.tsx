@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
-import { OrgSwitcher } from "@/components/shared/OrgSwitcher";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -30,12 +29,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        <Providers>
-          <header className="flex items-center justify-end border-b border-gray-200 px-4 py-2">
-            <OrgSwitcher />
-          </header>
-          {children}
-        </Providers>
+        <Providers>{children}</Providers>
       </body>
     </html>
   );
