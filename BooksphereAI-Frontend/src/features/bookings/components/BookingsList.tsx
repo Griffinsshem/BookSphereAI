@@ -35,11 +35,23 @@ export function BookingsList({ organizationId }: { organizationId: string }) {
       {data.items.map((booking) => (
         <li key={booking.id} className="flex items-center justify-between py-3">
           <div>
-            <p className="font-medium">{formatDateTime(booking.start_time)}</p>
-            <p className="text-sm text-gray-600">
-              {booking.status === "cancelled" ? "Cancelled" : "Confirmed"}
-              {booking.notes ? ` · ${booking.notes}` : ""}
+            <p className="font-mono text-sm font-medium">
+              {formatDateTime(booking.start_time)}
             </p>
+            <div className="mt-1 flex items-center gap-2">
+              <span
+                className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
+                  booking.status === "cancelled"
+                    ? "bg-muted text-muted-foreground"
+                    : "bg-success/10 text-success"
+                }`}
+              >
+                {booking.status === "cancelled" ? "Cancelled" : "Confirmed"}
+              </span>
+              {booking.notes && (
+                <span className="text-sm text-muted-foreground">{booking.notes}</span>
+              )}
+            </div>
           </div>
           {booking.status === "confirmed" && (
             <Button

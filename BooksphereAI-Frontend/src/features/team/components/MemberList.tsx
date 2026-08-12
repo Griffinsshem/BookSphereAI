@@ -49,7 +49,15 @@ export function MemberList({
             </div>
             <div className="flex items-center gap-2">
               {isOwner || !canManage ? (
-                <span className="text-sm text-gray-600">{member.role}</span>
+                <span
+                  className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium capitalize ${
+                    isOwner
+                      ? "bg-accent text-accent-foreground"
+                      : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  {member.role}
+                </span>
               ) : (
                 <>
                   <select

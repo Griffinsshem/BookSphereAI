@@ -10,7 +10,7 @@ export default function TeamPage() {
 
   if (!currentOrg) {
     return (
-      <main className="mx-auto max-w-2xl px-4 py-8">
+      <main className="mx-auto max-w-4xl px-6 py-8">
         <p className="text-sm text-gray-600">Loading your organization…</p>
       </main>
     );
@@ -19,14 +19,14 @@ export default function TeamPage() {
   const canManage = currentOrg.role === "owner" || currentOrg.role === "manager";
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <main className="mx-auto max-w-4xl px-6 py-8">
       <h1 className="mb-1 text-2xl font-semibold">Team</h1>
       <p className="mb-6 text-sm text-gray-600">
         Invite people to {currentOrg.name} and manage existing members.
       </p>
 
       {canManage && (
-        <div className="mb-8 rounded-lg border border-gray-200 p-4">
+        <div className="mb-8 rounded-lg border border-border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-medium">Invite someone</h2>
           <InviteForm organizationId={currentOrg.id} />
         </div>

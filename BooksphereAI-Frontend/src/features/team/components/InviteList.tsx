@@ -29,10 +29,14 @@ export function InviteList({ organizationId }: { organizationId: string }) {
         <li key={invite.id} className="flex items-center justify-between py-3">
           <div>
             <p className="font-medium">{invite.email}</p>
-            <p className="text-sm text-gray-600">
-              {invite.role} · Expires{" "}
-              {new Date(invite.expires_at).toLocaleDateString()}
-            </p>
+            <div className="mt-1 flex items-center gap-2">
+              <span className="inline-flex items-center rounded-full bg-warning/10 px-2 py-0.5 text-xs font-medium capitalize text-warning">
+                {invite.role}
+              </span>
+              <span className="font-mono text-xs text-muted-foreground">
+                Expires {new Date(invite.expires_at).toLocaleDateString()}
+              </span>
+            </div>
           </div>
           <Button
             variant="outline"

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AuthCard } from "@/components/shared/AuthCard";
 import { RegisterForm } from "@/features/auth/components/RegisterForm";
 
 export const metadata = {
@@ -7,18 +8,19 @@ export const metadata = {
 
 export default function RegisterPage() {
   return (
-    <main className="mx-auto flex min-h-screen max-w-md flex-col justify-center px-4">
-      <h1 className="mb-1 text-2xl font-semibold">Create your account</h1>
-      <p className="mb-6 text-sm text-gray-600">
-        Sets up your organization and gives you owner access.
-      </p>
+    <AuthCard
+      title="Create your account"
+      description="Sets up your organization and gives you owner access."
+      footer={
+        <>
+          Already have an account?{" "}
+          <Link href="/login" className="font-medium text-primary hover:underline">
+            Log in
+          </Link>
+        </>
+      }
+    >
       <RegisterForm />
-      <p className="mt-4 text-center text-sm text-gray-600">
-        Already have an account?{" "}
-        <Link href="/login" className="underline">
-          Log in
-        </Link>
-      </p>
-    </main>
+    </AuthCard>
   );
 }

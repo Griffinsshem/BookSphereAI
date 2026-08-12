@@ -13,7 +13,7 @@ export default function BookingsPage() {
 
   if (!currentOrg) {
     return (
-      <main className="mx-auto max-w-2xl px-4 py-8">
+      <main className="mx-auto max-w-4xl px-6 py-8">
         <p className="text-sm text-gray-600">Loading your organization…</p>
       </main>
     );
@@ -23,7 +23,7 @@ export default function BookingsPage() {
   const services = servicesData?.items ?? [];
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <main className="mx-auto max-w-4xl px-6 py-8">
       <h1 className="mb-1 text-2xl font-semibold">Bookings</h1>
       <p className="mb-6 text-sm text-gray-600">
         Book a resource, or view and manage existing bookings.
@@ -36,7 +36,7 @@ export default function BookingsPage() {
           first.
         </p>
       ) : (
-        <div className="mb-8 rounded-lg border border-gray-200 p-4">
+        <div className="mb-8 rounded-lg border border-border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-medium">New booking</h2>
           <BookingForm organizationId={currentOrg.id} resources={resources} services={services} />
         </div>

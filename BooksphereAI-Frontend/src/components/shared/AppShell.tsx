@@ -49,10 +49,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             key={item.href}
             href={item.href}
             onClick={() => setMobileNavOpen(false)}
-            className={`flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors ${
+            className={`flex items-center gap-3 rounded-md border-l-4 px-3 py-2 text-sm font-medium transition-colors ${
               isActive
-                ? "bg-gray-900 text-white"
-                : "text-gray-700 hover:bg-gray-100"
+                ? "border-primary bg-accent text-accent-foreground"
+                : "border-transparent text-muted-foreground hover:bg-secondary hover:text-foreground"
             }`}
           >
             <Icon className="h-4 w-4" />
@@ -66,8 +66,13 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen">
       {/* Desktop sidebar */}
-      <aside className="hidden w-64 flex-col border-r border-gray-200 py-6 md:flex">
-        <div className="mb-6 px-4 text-lg font-semibold">BookSphere AI</div>
+      <aside className="hidden w-64 flex-col border-r border-border bg-sidebar py-6 md:flex">
+        <div className="mb-6 flex items-center gap-2 px-4">
+          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-sm font-bold text-primary-foreground">
+            B
+          </div>
+          <span className="text-lg font-semibold tracking-tight">BookSphere AI</span>
+        </div>
         {NavLinks}
         <div className="mt-auto px-3 pt-4">
           <button
@@ -116,7 +121,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Main content area */}
       <div className="flex flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-gray-200 px-4 py-3">
+        <header className="flex items-center justify-between border-b border-border bg-card px-4 py-3">
           <button
             className="md:hidden"
             onClick={() => setMobileNavOpen(true)}

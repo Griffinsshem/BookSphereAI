@@ -11,7 +11,7 @@ export default function ServicesPage() {
 
   if (!currentOrg) {
     return (
-      <main className="mx-auto max-w-2xl px-4 py-8">
+      <main className="mx-auto max-w-4xl px-6 py-8">
         <p className="text-sm text-gray-600">Loading your organization…</p>
       </main>
     );
@@ -21,14 +21,14 @@ export default function ServicesPage() {
   const resources = resourcesData?.items ?? [];
 
   return (
-    <main className="mx-auto max-w-2xl px-4 py-8">
+    <main className="mx-auto max-w-4xl px-6 py-8">
       <h1 className="mb-1 text-2xl font-semibold">Services</h1>
       <p className="mb-6 text-sm text-gray-600">
         What customers actually book -- linked to one or more resources.
       </p>
 
       {canManage && (
-        <div className="mb-8 rounded-lg border border-gray-200 p-4">
+        <div className="mb-8 rounded-lg border border-border bg-card p-6 shadow-sm">
           <h2 className="mb-4 text-lg font-medium">Add a service</h2>
           <ServiceForm organizationId={currentOrg.id} />
         </div>

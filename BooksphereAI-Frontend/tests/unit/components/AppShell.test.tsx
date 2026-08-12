@@ -32,9 +32,14 @@ describe("AppShell", () => {
     // Two copies of each link exist (desktop sidebar + mobile
     // slide-over) -- check at least one "Resources" link has the
     // active styling, matching the mocked pathname "/resources".
+    // Checks for "border-primary" (the left accent bar) rather than
+    // a specific background color -- ties the test to the SEMANTIC
+    // active-state mechanism (the design-token-driven accent), not
+    // one specific implementation of it, so a future palette tweak
+    // doesn't require touching this test again.
     const resourcesLinks = screen.getAllByText("Resources");
     const activeLink = resourcesLinks.find((el) =>
-      el.closest("a")?.className.includes("bg-gray-900"),
+      el.closest("a")?.className.includes("border-primary"),
     );
     expect(activeLink).toBeDefined();
   });

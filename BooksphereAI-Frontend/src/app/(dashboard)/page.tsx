@@ -31,7 +31,7 @@ export default function HomePage() {
     .slice(0, 5);
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
+    <div className="mx-auto max-w-4xl px-6 py-8">
       <h1 className="mb-1 text-2xl font-semibold">
         {user ? `Welcome back, ${user.full_name.split(" ")[0]}` : "Welcome"}
       </h1>
@@ -46,7 +46,7 @@ export default function HomePage() {
             <Link
               key={link.href}
               href={link.href}
-              className="flex flex-col items-start gap-2 rounded-lg border border-gray-200 p-4 transition-colors hover:border-gray-400 hover:bg-gray-50"
+              className="flex flex-col items-start gap-2 rounded-lg border border-border bg-card p-4 shadow-sm transition-all hover:border-primary hover:shadow-md"
             >
               <Icon className="h-5 w-5 text-gray-700" />
               <span className="text-sm font-medium">{link.label}</span>
@@ -66,7 +66,7 @@ export default function HomePage() {
           to get started.
         </p>
       ) : (
-        <ul className="divide-y divide-gray-200 rounded-lg border border-gray-200">
+        <ul className="divide-y divide-border rounded-lg border border-border bg-card shadow-sm">
           {upcomingConfirmed.map((booking) => (
             <li key={booking.id} className="px-4 py-3">
               <p className="text-sm font-medium">{formatDateTime(booking.start_time)}</p>
