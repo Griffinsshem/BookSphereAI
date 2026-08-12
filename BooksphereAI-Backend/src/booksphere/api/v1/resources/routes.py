@@ -21,7 +21,7 @@ from booksphere.domain.resources.exceptions import (
     InvalidWorkingHoursError,
     ResourceNotFoundError,
 )
-from booksphere.middleware.tenant_context import require_organization_role
+from booksphere.middleware.tenant_context import require_organization_role, require_verified_email
 from booksphere.repositories.resource_repository import ResourceRepository
 from booksphere.repositories.working_hours_repository import WorkingHoursRepository
 from booksphere.services.catalog.resource_service import ResourceService
@@ -39,6 +39,7 @@ def _build_service() -> ResourceService:
 @jwt_required()
 def create_resource(organization_id):
     require_organization_role(organization_id, "owner", "manager")
+    require_verified_email()
 
     try:
         data = CreateResourceSchema().load(request.get_json(silent=True) or {})

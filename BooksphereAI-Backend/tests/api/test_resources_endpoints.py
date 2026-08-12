@@ -23,6 +23,22 @@ def _register_and_get_token(client, email, org_name):
         },
     )
     body = response.get_json()
+
+    # Auto-verify: every existing test written before Email
+    # Verification existed reasonably assumes a freshly-registered
+    # user can immediately perform write actions. Rather than editing
+    # every individual test to route through the verify-email flow,
+    # this shared helper (imported by every API test file in the
+    # project) marks the user verified directly -- tests that
+    # SPECIFICALLY want to exercise the unverified state construct
+    # their own unverified user instead of using this helper.
+    from booksphere.extensions import db
+    from booksphere.models.user import User
+
+    user_row = db.session.get(User, body["user"]["id"])
+    user_row.email_verified = True
+    db.session.commit()
+
     return body["access_token"], body["user"]["id"]
 
 

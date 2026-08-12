@@ -26,3 +26,22 @@ class OrganizationSlugTakenError(DomainError):
 
 class InvalidRefreshTokenError(DomainError):
     pass
+
+
+class VerificationTokenNotFoundError(DomainError):
+    pass
+
+
+class VerificationTokenExpiredError(DomainError):
+    pass
+
+
+class EmailAlreadyVerifiedError(DomainError):
+    pass
+
+
+class EmailNotVerifiedError(DomainError):
+    """Raised by require_verified_email() -- distinct from the token-
+    lifecycle errors above, this one gates an UNRELATED action (e.g.
+    creating a booking) on the user's verification status, not on
+    anything about a verification token itself."""

@@ -40,6 +40,7 @@ class UserResponseSchema(Schema):
     id = fields.UUID()
     email = fields.Email()
     full_name = fields.String()
+    email_verified = fields.Boolean()
     created_at = fields.DateTime()
 
 

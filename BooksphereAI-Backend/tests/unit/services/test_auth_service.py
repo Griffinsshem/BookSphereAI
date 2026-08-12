@@ -19,6 +19,19 @@ from tests.unit.services.fakes import (
 )
 
 
+class _FakeEmailVerificationService:
+    """Records calls instead of touching a real database -- register()
+    calls issue_token() as a side effect, which this fixture needs to
+    accept without requiring EmailVerificationRepository or a real
+    user row to exist."""
+
+    def __init__(self):
+        self.issued_for = []
+
+    def issue_token(self, user_id, frontend_base_url):
+        self.issued_for.append(user_id)
+
+
 @pytest.fixture
 def auth_service(monkeypatch):
     # AuthService.register() flushes via booksphere.extensions.db,
@@ -43,6 +56,7 @@ def auth_service(monkeypatch):
         org_repo=FakeOrganizationRepository(),
         membership_repo=FakeMembershipRepository(),
         refresh_token_repo=FakeRefreshTokenRepository(),
+        email_verification_service=_FakeEmailVerificationService(),
     )
     return service
 

@@ -27,6 +27,13 @@ class User(db.Model, UUIDPrimaryKeyMixin, TimestampMixin):
 
     is_active: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
 
+    # Gates write actions with real consequences (bookings, invites,
+    # resource/service creation) -- see require_verified_email() in
+    # middleware/tenant_context.py. Registration and login remain
+    # unaffected; this is enforced at the specific endpoints that
+    # matter, not as a login-blocking wall.
+    email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False)
+
     memberships: Mapped[list["OrganizationMembership"]] = relationship(
         back_populates="user", cascade="all, delete-orphan"
     )

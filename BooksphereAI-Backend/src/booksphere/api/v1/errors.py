@@ -15,10 +15,22 @@ import logging
 from flask import Flask, jsonify
 from werkzeug.exceptions import HTTPException
 
+from booksphere.domain.users.exceptions import EmailNotVerifiedError
+
 _logger = logging.getLogger("booksphere.errors")
 
 
 def register_error_handlers(app: Flask) -> None:
+    @app.errorhandler(EmailNotVerifiedError)
+    def handle_email_not_verified(err: EmailNotVerifiedError):
+        # A distinct, recognizable error code -- the frontend
+        # specifically checks for EMAIL_NOT_VERIFIED to show the
+        # verification prompt rather than a generic error toast.
+        return (
+            jsonify({"error": {"code": "EMAIL_NOT_VERIFIED", "message": str(err)}}),
+            403,
+        )
+
     @app.errorhandler(HTTPException)
     def handle_http_exception(err: HTTPException):
         return (

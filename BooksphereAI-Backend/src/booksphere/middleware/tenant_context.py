@@ -17,6 +17,8 @@ from flask_jwt_extended import get_jwt_identity
 from werkzeug.exceptions import Forbidden
 
 from booksphere.repositories.membership_repository import MembershipRepository
+from booksphere.repositories.user_repository import UserRepository
+from booksphere.domain.users.exceptions import EmailNotVerifiedError
 
 
 def require_organization_role(organization_id: UUID, *allowed_roles: str) -> None:
@@ -50,3 +52,20 @@ def get_membership_role(organization_id: UUID) -> str | None:
     user_id = get_jwt_identity()
     membership = MembershipRepository().get_for_user_and_org(user_id, organization_id)
     return membership.role if membership else None
+
+
+def require_verified_email() -> None:
+    """Raise EmailNotVerifiedError unless the current JWT-authenticated
+    user has verified their email. Applied to write endpoints with
+    real consequences (create booking, create invite, create
+    resource/service) -- deliberately NOT applied to read endpoints
+    or to login/registration itself, per this feature's scope
+    decision: gate meaningful actions, don't wall off the whole app.
+    """
+    user_id = get_jwt_identity()
+    user = UserRepository().get_by_id(user_id)
+
+    if user is None or not user.email_verified:
+        raise EmailNotVerifiedError(
+            "Please verify your email address before performing this action."
+        )

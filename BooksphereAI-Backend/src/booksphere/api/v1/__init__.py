@@ -13,6 +13,7 @@ from flask import Flask
 def register_v1_blueprints(app: Flask) -> None:
     from booksphere.api.v1.auth.routes import auth_bp
     from booksphere.api.v1.bookings.routes import bookings_bp
+    from booksphere.api.v1.email_verification.routes import email_verification_bp
     from booksphere.api.v1.organizations.routes import organizations_bp
     from booksphere.api.v1.resources.routes import resources_bp
     from booksphere.api.v1.services.routes import services_bp
@@ -26,6 +27,7 @@ def register_v1_blueprints(app: Flask) -> None:
     app.register_blueprint(services_bp)
     app.register_blueprint(bookings_bp)
     app.register_blueprint(organizations_bp)
+    app.register_blueprint(email_verification_bp)
     app.register_blueprint(org_invites_bp)
     app.register_blueprint(invites_bp)
     app.register_blueprint(members_bp)

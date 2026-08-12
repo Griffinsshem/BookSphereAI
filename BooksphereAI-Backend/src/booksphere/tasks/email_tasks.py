@@ -26,3 +26,17 @@ def send_invite_email(
         inviter_name,
         accept_url,
     )
+
+
+@celery_app.task(name="booksphere.tasks.send_verification_email")
+def send_verification_email(to_email: str, full_name: str, verify_url: str) -> None:
+    """Same log-instead-of-send placeholder as send_invite_email --
+    replacing this with a real provider call later is a one-function
+    change, nothing about registration or the verification flow needs
+    to change alongside it."""
+    _logger.info(
+        "VERIFICATION_EMAIL to=%s name=%s verify_url=%s",
+        to_email,
+        full_name,
+        verify_url,
+    )

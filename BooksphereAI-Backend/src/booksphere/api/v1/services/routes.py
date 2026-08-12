@@ -15,7 +15,7 @@ from booksphere.domain.resources.exceptions import (
     InvalidServiceDurationError,
     ServiceNotFoundError,
 )
-from booksphere.middleware.tenant_context import require_organization_role
+from booksphere.middleware.tenant_context import require_organization_role, require_verified_email
 from booksphere.repositories.resource_repository import ResourceRepository
 from booksphere.repositories.service_repository import ServiceRepository
 from booksphere.repositories.service_resource_repository import ServiceResourceRepository
@@ -34,6 +34,7 @@ def _build_service() -> OfferingService:
 @jwt_required()
 def create_service(organization_id):
     require_organization_role(organization_id, "owner", "manager")
+    require_verified_email()
 
     try:
         data = CreateServiceSchema().load(request.get_json(silent=True) or {})

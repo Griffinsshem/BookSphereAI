@@ -26,7 +26,7 @@ from booksphere.domain.team.exceptions import (
     InviteExpiredError,
     InviteNotFoundError,
 )
-from booksphere.middleware.tenant_context import require_organization_role
+from booksphere.middleware.tenant_context import require_organization_role, require_verified_email
 from booksphere.repositories.invite_repository import InviteRepository
 from booksphere.repositories.membership_repository import MembershipRepository
 from booksphere.repositories.organization_repository import OrganizationRepository
@@ -47,6 +47,7 @@ def _build_service() -> InviteService:
 @jwt_required()
 def create_invite(organization_id):
     require_organization_role(organization_id, "owner", "manager")
+    require_verified_email()
 
     try:
         data = CreateInviteSchema().load(request.get_json(silent=True) or {})

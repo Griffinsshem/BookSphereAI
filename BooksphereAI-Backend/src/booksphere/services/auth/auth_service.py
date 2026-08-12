@@ -56,14 +56,28 @@ class AuthService:
         org_repo: OrganizationRepository,
         membership_repo: MembershipRepository,
         refresh_token_repo: RefreshTokenRepository,
+        email_verification_service=None,
     ) -> None:
+        # Dependencies are injected, not constructed here — this is
+        # what lets tests substitute fake repositories without
+        # touching a real database. email_verification_service
+        # defaults to None; register() builds a real one lazily if
+        # none was provided (the real route never passes this), while
+        # unit tests substitute a fake to avoid a real database write
+        # tied to a fake, non-persisted user.
         self._users = user_repo
         self._orgs = org_repo
         self._memberships = membership_repo
         self._refresh_tokens = refresh_token_repo
+        self._email_verification = email_verification_service
 
     def register(
-        self, email: str, password: str, full_name: str, organization_name: str
+        self,
+        email: str,
+        password: str,
+        full_name: str,
+        organization_name: str,
+        frontend_base_url: str = "http://localhost:3000",
     ) -> tuple[User, Organization]:
         """Creates a User, a new Organization, and an 'owner'
         membership linking them, atomically."""
@@ -94,11 +108,34 @@ class AuthService:
             user_id=user.id, organization_id=organization.id, role="owner"
         )
         self._memberships.add(membership)
-        self._users.commit() 
+        self._users.commit()
 
         log_security_event(
             "user_registered", user_id=str(user.id), org_id=str(organization.id)
         )
+
+        # Fire-and-forget verification email, same as the invite
+        # flow's Celery pattern. Uses the injected service if one was
+        # provided (tests substitute a fake here); otherwise builds a
+        # real one lazily -- this is what makes the REAL route (which
+        # never passes this argument) work unchanged, while a unit
+        # test constructing AuthService with only fakes never
+        # triggers a real database write it didn't ask for.
+        email_verification = self._email_verification
+        if email_verification is None:
+            from booksphere.repositories.email_verification_repository import (
+                EmailVerificationRepository,
+            )
+            from booksphere.services.auth.email_verification_service import (
+                EmailVerificationService,
+            )
+
+            email_verification = EmailVerificationService(
+                EmailVerificationRepository(), self._users
+            )
+
+        email_verification.issue_token(user.id, frontend_base_url)
+
         return user, organization
 
     def login(self, email: str, password: str) -> tuple[User, AuthTokens]:

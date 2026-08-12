@@ -31,7 +31,11 @@ from booksphere.domain.bookings.exceptions import (
     SlotUnavailableError,
 )
 from booksphere.domain.resources.exceptions import ResourceNotFoundError, ServiceNotFoundError
-from booksphere.middleware.tenant_context import get_membership_role, require_organization_role
+from booksphere.middleware.tenant_context import (
+    get_membership_role,
+    require_organization_role,
+    require_verified_email,
+)
 from booksphere.repositories.booking_repository import BookingRepository
 from booksphere.repositories.organization_repository import OrganizationRepository
 from booksphere.repositories.resource_repository import ResourceRepository
@@ -85,6 +89,7 @@ def get_availability(organization_id):
 @jwt_required()
 def create_booking(organization_id):
     require_organization_role(organization_id, "owner", "manager", "staff", "customer")
+    require_verified_email()
 
     try:
         data = CreateBookingSchema().load(request.get_json(silent=True) or {})

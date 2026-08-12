@@ -79,6 +79,8 @@ def register():
     except ValidationError as err:
         return jsonify({"error": {"code": "VALIDATION_ERROR", "details": err.messages}}), 422
 
+    frontend_base_url = request.headers.get("Origin") or "http://localhost:3000"
+
     service = _build_service()
     try:
         user, organization = service.register(
@@ -86,6 +88,7 @@ def register():
             password=data["password"],
             full_name=data["full_name"],
             organization_name=data["organization_name"],
+            frontend_base_url=frontend_base_url,
         )
     except EmailAlreadyRegisteredError:
         return jsonify({"error": {"code": "EMAIL_TAKEN", "message": "Email already registered."}}), 409
